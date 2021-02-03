@@ -1,1 +1,0 @@
-This module demonstrate developing a simple web app using MyBatis persistence framework.
