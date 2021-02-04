@@ -19,7 +19,7 @@ public class MyBatisSqlSessionFactory {
             synchronized (MyBatisSqlSessionFactory.class) {
                 if (sqlSessionFactory == null) {
                     // 实例化
-                    try (InputStream in = Resources.getResourceAsStream("mybatis-config.xml");) {
+                    try (InputStream in = Resources.getResourceAsStream("mybatis-config.xml")) {
                         sqlSessionFactory = new SqlSessionFactoryBuilder().build(in);
                     } catch (IOException e) {
                         throw new RuntimeException(e.getCause());

@@ -38,11 +38,6 @@ public class PhoneNumber  implements Serializable
 		}
 	}
 	
-	/*@Override
-	public String toString() {
-		return this.getAsString();
-	}*/
-	
 	public String getCountryCode() {
 		return countryCode;
 	}
