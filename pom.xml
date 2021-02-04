@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mybatis3</groupId>
     <artifactId>java-persistence-with-mybatis3</artifactId>
     <version>0.0.1</version>
-
     <modules>
         <module>chapter01</module>
         <module>chapter02</module>
@@ -20,10 +20,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.6</java.version>
+        <java.version>1.8</java.version>
         <junit.version>4.11</junit.version>
-        <slf4j.version>1.7.5</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+        <slf4j.log4j12.version>1.7.5</slf4j.log4j12.version>
         <mybatis.version>3.2.2</mybatis.version>
         <mysql.version>8.0.21</mysql.version>
         <maven.compiler.plugin>2.3.2</maven.compiler.plugin>
@@ -62,22 +61,8 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
+            <version>${slf4j.log4j12.version}</version>
         </dependency>
 
         <dependency>
@@ -87,5 +72,4 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
 </project>
