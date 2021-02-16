@@ -24,7 +24,7 @@
 
     <!--告诉 MyBatis Mapper XML 文件的位置-->
     <mappers>
-        <mapper resource="com/mybatis3/mappers/StudentMapper.xml"/>
+        <mapper resource="com/mybatis3/mapper/StudentMapper.xml"/>
     </mappers>
 
 </configuration>

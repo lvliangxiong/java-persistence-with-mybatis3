@@ -11,12 +11,20 @@
         <version>0.0.1</version>
     </parent>
 
-    <groupId>com.mybatis3</groupId>
     <artifactId>chapter02</artifactId>
-    <version>0.0.1</version>
-    <name>chapter02</name>
+    <packaging>jar</packaging>
+
+    <name>ch02 Bootstrapping MyBatis</name>
     <url>http://www.mybatis.org</url>
     <description>MyBatis Book Chapter 02</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mybatis3</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

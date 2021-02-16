@@ -8,24 +8,44 @@
     <groupId>com.mybatis3</groupId>
     <artifactId>java-persistence-with-mybatis3</artifactId>
     <version>0.0.1</version>
+
+    <packaging>pom</packaging>
     <modules>
         <module>chapter01</module>
         <module>chapter02</module>
         <module>chapter03</module>
         <module>chapter04</module>
         <module>chapter05</module>
+        <module>core</module>
     </modules>
 
-    <packaging>pom</packaging>
-
     <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <junit.version>4.11</junit.version>
-        <slf4j.log4j12.version>1.7.5</slf4j.log4j12.version>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.plugin>2.3.2</maven.compiler.plugin>
+        <maven.resources.plugin>2.6</maven.resources.plugin>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
+        <maven.javadoc.plugin.version>2.10.2</maven.javadoc.plugin.version>
+        <maven.source.plugin.version>2.4</maven.source.plugin.version>
+
+        <junit.version>5.6.2</junit.version>
+        <log4j.version>2.11.1</log4j.version>
+        <jcl.slf4j.version>1.7.25</jcl.slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <mybatis.version>3.2.2</mybatis.version>
         <mysql.version>8.0.21</mysql.version>
-        <maven.compiler.plugin>2.3.2</maven.compiler.plugin>
+        <mybatis.spring.version>1.2.0</mybatis.spring.version>
+        <spring.version>5.2.6.RELEASE</spring.version>
+        <aspectj.version>1.6.8</aspectj.version>
+        <cglib.version>2.2</cglib.version>
+        <commons.dbcp.version>1.4</commons.dbcp.version>
+        <commons.pool.version>1.6</commons.pool.version>
+        <commons.lang.version>2.5</commons.lang.version>
     </properties>
 
     <build>
@@ -35,22 +55,76 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.resources.plugin}</version>
             </plugin>
 
+            <!--Generate java doc jar-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.plugin.version}</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--Generate java source jar-->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- These plugins are required to recognize Junit5 tests and run them in Maven.-->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>fast</id>
+            <properties>
+                <!--skip unit test-->
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -60,9 +134,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.log4j12.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
 
         <dependency>

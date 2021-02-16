@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <!--Activates various annotations to be detected in bean classes-->
+    <context:annotation-config/>
+
+    <!--
+    Indicates that transaction configuration is defined by Java 5 annotations on bean classes, and that proxies are
+    automatically to be created for the relevant annotated beans.
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--
+    Scans the classpath for annotated components that will be auto-registered as Spring beans. By default, the
+    Spring-provided @Component, @Repository, @Service, @Controller, @RestController, @ControllerAdvice, and
+    @Configuration stereotypes will be detected.
+    -->
+    <context:component-scan base-package="com.mybatis3.service"/>
+
+    <!--
+    Activates replacement of ${...} placeholders by registering a PropertySourcesPlaceholderConfigurer within the
+    application context.
+    -->
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!--
+    等效于 MyBatis XML 配置文件中的 dataSource 标签。
+    这里使用的是 DriverManagerDataSource，这是 Spring 自带的数据源，它对于每个连接请求都会新建一个连接，没有『池化』。
+    默认情况下，此数据源的连接也都是『自动提交』的。
+    -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--等效于 MyBatis 中的 SqlSessionFactory 对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.mybatis3.domain"/>
+        <property name="typeHandlersPackage" value="com.mybatis3.typehandler"/>
+        <!--配合 SqlSessionTemplate 使用，可以使用 getMapper 获取相应的 Mapper 对象，这些 Mapper 对象没有被 Spring 管理-->
+        <property name="mapperLocations" value="classpath:com/mybatis3/mapper/*.xml"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+    <!--
+    Thread safe, Spring managed, SqlSession that works with Spring transaction management to ensure that that the
+    actual SqlSession used is the one associated with the current Spring transaction. In addition, it manages the
+    session life-cycle, including closing, committing or rolling back the session as necessary based on the Spring
+    transaction configuration.
+    Conceptually, it is similar to JdbcTemplate of the Spring DAO module.
+    -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+</beans>

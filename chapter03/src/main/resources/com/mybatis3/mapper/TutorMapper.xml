@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis3.mapper.TutorMapper">
+
+    <!--
+    Tutor 和 Course 的关系是典型的 one-to-many 映射，即一个 Tutor 对应着多个 Course。 ===> 1 对 N 的关联关系（Association）
+    对于 one-to-one mapping，我们可以通过 <association> 标签配合 nested ResultMap 或者 nested select 完成查询。
+    对于 one-to-many mapping，我们使用的是 <collection> 标签。
+    类似的：
+        1. nested ResultMap 需要配合多表查询，将所有需要的列完全查询出来
+        2. nested Select 则会进行多次查询
+    -->
+
+    <!--Nested ResultMap-->
+    <resultMap type="Tutor" id="TutorWithCoursesNestedResultMap">
+        <id column="tutor_id" property="tutorId"/>
+        <result column="tutor_name" property="name"/>
+        <result column="email" property="email"/>
+        <association property="address" resultMap="com.mybatis3.mapper.AddressMapper.AddressResultMap"/>
+        <collection property="courses" resultMap="com.mybatis3.mapper.CourseMapper.CourseResultMap"/>
+    </resultMap>
+
+    <!--Nested Select-->
+    <resultMap type="Tutor" id="TutorWithCoursesNestedSelect">
+        <id column="tutor_id" property="tutorId"/>
+        <result column="tutor_name" property="name"/>
+        <result column="email" property="email"/>
+        <!--one-to-one mapping 的 nested ResultMap 查询-->
+        <association property="address" resultMap="com.mybatis3.mapper.AddressMapper.AddressResultMap"/>
+        <!--one-to-many mapping 的 nested Select 查询-->
+        <collection property="courses" column="tutor_id"
+                    select="com.mybatis3.mapper.CourseMapper.selectCoursesByTutor"/>
+    </resultMap>
+
+    <select id="selectTutorById" parameterType="int" resultMap="TutorWithCoursesNestedResultMap">
+        SELECT t.tutor_id,
+               t.name AS tutor_name,
+               email,
+               a.addr_id,
+               street,
+               city,
+               state,
+               zip,
+               country,
+               course_id,
+               c.name,
+               description,
+               start_date,
+               end_date
+        FROM tutor t
+                 LEFT OUTER JOIN address a ON t.addr_id = a.addr_id
+                 LEFT OUTER JOIN course c ON t.tutor_id = c.tutor_id
+        WHERE t.tutor_id = #{tutorId}
+    </select>
+
+    <select id="selectTutorWithCourses" parameterType="int" resultMap="TutorWithCoursesNestedSelect">
+        SELECT t.tutor_id,
+               t.name as tutor_name,
+               email,
+               a.addr_id,
+               street,
+               city,
+               state,
+               zip,
+               country
+        FROM tutor t
+                 LEFT OUTER JOIN address a ON t.addr_id = a.addr_id
+        WHERE t.tutor_id = #{tutorId}
+    </select>
+
+</mapper>

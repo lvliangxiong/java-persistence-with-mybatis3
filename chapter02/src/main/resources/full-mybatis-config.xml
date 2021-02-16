@@ -31,8 +31,8 @@
     </typeAliases>
 
     <typeHandlers>
-        <typeHandler handler="com.mybatis3.typehandlers.PhoneTypeHandler"/>
-        <package name="com.mybatis3.typehandlers"/>
+        <typeHandler handler="com.mybatis3.typehandler.PhoneTypeHandler"/>
+        <package name="com.mybatis3.typehandler"/>
     </typeHandlers>
 
     <environments default="development">
@@ -56,9 +56,9 @@
     </environments>
 
     <mappers>
-        <mapper resource="com/mybatis3/mappers/StudentMapper.xml"/>
+        <mapper resource="com/mybatis3/mapper/StudentMapper.xml"/>
         <mapper url="file:///var/mappers/StudentMapper.xml"/>
-        <mapper class="com.mybatis3.mappers.TutorMapper"/>
+        <mapper class="com.mybatis3.mapper.TutorMapper"/>
     </mappers>
 
 

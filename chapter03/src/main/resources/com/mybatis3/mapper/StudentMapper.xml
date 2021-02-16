@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis3.mapper.StudentMapper">
+
+    <!--
+    Student 和 Address 是 one-to-one mapping 的关系，有多种方式可以实现仅仅使用一条 SQL Statement 将它们都查询出来：
+        1. 使用 . 进行嵌套引用（这种方式的 ResultMap 结合多表连接查询，一次性查询出多个表的列，并按照 ResultMap 中定义的映射
+            关系对返回的对象的属性进行设置）
+        2. Nested ResultMap，和第一种方式的使用是相同的，一般也是会通过多表连接，将对象需要的信息全部查询出来
+        3. Nested Select，不需要进行多表连接，MyBatis 会自动进行第二次查询，但是需要查询出用于第二次查询使用的参数
+    本质上来说，1 和 2 仅查询了一次数据库，但是 3 查询了两次，因此性能上 1 和 2 要更好一些。另外 2 的可扩展性要比 1 要好，因此
+    建议多使用 2。
+    -->
+    <resultMap type="Student" id="StudentResultMap">
+        <id property="studId" column="stud_id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+    </resultMap>
+
+    <resultMap type="Student" id="StudentWithAddressResultMap">
+        <id property="studId" column="stud_id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <!--使用 dot notation 将查询到的列，直接设置到 Student 对象中的 Address 对象的属性上-->
+        <result property="address.addrId" column="addr_id"/>
+        <result property="address.street" column="street"/>
+        <result property="address.city" column="city"/>
+        <result property="address.state" column="state"/>
+        <result property="address.zip" column="zip"/>
+        <result property="address.country" column="country"/>
+    </resultMap>
+
+    <!--这个是 StudentWithAddressResultMap 的简化版，可以继承 StudentResultMap 中已经定义好的映射关系-->
+    <resultMap type="Student" id="StudentWithAddressExtResultMap" extends="StudentResultMap">
+        <result property="address.addrId" column="addr_id"/>
+        <result property="address.street" column="street"/>
+        <result property="address.city" column="city"/>
+        <result property="address.state" column="state"/>
+        <result property="address.zip" column="zip"/>
+        <result property="address.country" column="country"/>
+    </resultMap>
+
+    <!--Nested ResultMap-->
+    <resultMap type="Student" id="StudentWithAddressNestedResultMap">
+        <id property="studId" column="stud_id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+
+        <!--以下两种方式均可以，都是嵌套的 ResultMap，一般会使用第二种-->
+        <!--inline ResultMap-->
+        <!--
+        <association property="address" javaType="Address">
+            <id property="addrId" column="addr_id"/>
+            <result property="street" column="street"/>
+            <result property="city" column="city"/>
+            <result property="state" column="state"/>
+            <result property="zip" column="zip"/>
+            <result property="country" column="country"/>
+        </association>
+        -->
+
+        <!--nested ResultMap-->
+        <association property="address" resultMap="com.mybatis3.mapper.AddressMapper.AddressResultMap"/>
+    </resultMap>
+
+    <!--Nested Select-->
+    <resultMap type="Student" id="StudentWithAddressNestedSelectResultMap">
+        <id property="studId" column="stud_id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <!--以查询到的结果中的指定的 column 为参数，调用另一个查询，结果放入 property 指定的对象属性中-->
+        <association property="address" column="addr_id" select="com.mybatis3.mapper.AddressMapper.findAddressById"/>
+    </resultMap>
+
+    <select id="findAllStudents" resultMap="StudentResultMap">
+        SELECT *
+        FROM student
+    </select>
+
+    <select id="findStudentById" resultMap="StudentWithAddressNestedSelectResultMap">
+        SELECT *
+        FROM student
+        WHERE stud_id = #{id}
+    </select>
+
+    <select id="selectStudentWithAddress" parameterType="int" resultMap="StudentWithAddressNestedResultMap">
+        SELECT stud_id,
+               name,
+               email,
+               phone,
+               a.addr_id,
+               street,
+               city,
+               state,
+               zip,
+               country
+        FROM student s
+                 LEFT OUTER JOIN address a ON s.addr_id = a.addr_id
+        WHERE stud_id = #{studId}
+    </select>
+
+    <!--useGeneratedKeys 表示使用自增主键，并且插入完成后，该主键的值会被放入 keyProperty 指定的属性中-->
+    <insert id="insertStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="studId">
+        INSERT INTO student (name, email, addr_id, phone)
+        VALUES (#{name}, #{email}, #{address.addrId}, #{phone})
+    </insert>
+
+    <insert id="insertStudentWithMap" parameterType="hashmap" useGeneratedKeys="true" keyProperty="studId">
+        INSERT INTO student (name, email, addr_id, phone)
+        VALUES (#{name}, #{email}, #{address.addrId}, #{phone})
+    </insert>
+
+    <update id="updateStudent" parameterType="Student">
+        UPDATE student
+        -- 动态 SQL，test 表示的条件是 OGNL 表达式
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+        </set>
+        WHERE stud_id = #{studId}
+    </update>
+
+    <delete id="deleteStudent" parameterType="int">
+        DELETE
+        FROM student
+        WHERE stud_id = #{studId}
+    </delete>
+
+</mapper>

@@ -15,13 +15,6 @@ public class Address implements Serializable {
     private String zip;
     private String country;
 
-    @Override
-    public String toString() {
-        return "Address [addrId=" + addrId + ", street=" + street + ", city=" + city
-                + ", state=" + state + ", zip=" + zip + ", country=" + country
-                + "]";
-    }
-
     public Address() {
     }
 
@@ -37,6 +30,13 @@ public class Address implements Serializable {
         this.state = state;
         this.zip = zip;
         this.country = country;
+    }
+
+    @Override
+    public String toString() {
+        return "Address [addrId=" + addrId + ", street=" + street + ", city=" + city
+                + ", state=" + state + ", zip=" + zip + ", country=" + country
+                + "]";
     }
 
     public Integer getAddrId() {

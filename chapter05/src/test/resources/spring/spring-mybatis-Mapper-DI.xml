@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						http://mybatis.org/schema/mybatis-spring
+						http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <!--Activates various annotations to be detected in bean classes-->
+    <context:annotation-config/>
+
+    <!--
+    Indicates that transaction configuration is defined by Java 5 annotations on bean classes, and that proxies are
+    automatically to be created for the relevant annotated beans.
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--
+    Activates replacement of ${...} placeholders by registering a PropertySourcesPlaceholderConfigurer within the
+    application context.
+    -->
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="studentService" class="com.mybatis3.service.StudentService"></bean>
+
+    <!--等效于 MyBatis XML 配置文件中的 dataSource 标签-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--等效于 MyBatis 中的 SqlSessionFactory 对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.mybatis3.domain"/>
+        <property name="typeHandlersPackage" value="com.mybatis3.typehandler"/>
+        <property name="mapperLocations" value="classpath:com/mybatis3/mapper/*.xml"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+    <!--
+    将 Mapper 对象交给 Spring 管理，这样就可以直接使用 Spring 进行注入，而不需要先注入 SqlSessionTemplate 对象，然后调用其
+    getMapper 方法获得 Mapper 对象，最后才能调用 Mapper 对象实现的数据库操作。
+    以下 4 种方法均可实现上述过程：
+        1. 使用 MapperFactoryBean 手动创建 Bean
+        2. 配置 MapperScannerConfigurer，自动扫描包，并注册 Mapper Bean
+    mybatis-spring-1.2.0 中提供了两种新的方式：（这两种方式使用的都是 org.mybatis.spring.mapper.ClassPathMapperScanner）
+        3. 使用 <mybatis:scan>
+        4. 使用 @MapperScan 注解（ > Spring 3.1+）
+    -->
+
+    <!--
+        <bean id="studentMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+            <property name="mapperInterface" value="com.mybatis3.mapper.StudentMapper"/>
+            <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+        </bean>
+    -->
+
+    <!--
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.mybatis3.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    -->
+
+    <mybatis:scan base-package="com.mybatis3.mapper"/>
+
+</beans>

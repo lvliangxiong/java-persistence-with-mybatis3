@@ -11,7 +11,7 @@
     </typeAliases>
 
     <typeHandlers>
-        <typeHandler handler="com.mybatis3.typehandlers.PhoneTypeHandler"/>
+        <typeHandler handler="com.mybatis3.typehandler.PhoneTypeHandler"/>
     </typeHandlers>
 
     <environments default="development">
@@ -27,7 +27,9 @@
     </environments>
 
     <mappers>
-        <package name="com.mybatis3.mappers"/>
+        <!--以下两种方式都可以使用接口扫描-->
+        <mapper resource="com/mybatis3/mapper/StudentMapper.xml"/>
+        <!--<package name="com.mybatis3.mapper"/>-->
     </mappers>
 
 </configuration>

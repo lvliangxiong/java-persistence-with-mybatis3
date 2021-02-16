@@ -1,8 +1,8 @@
 package com.mybatis3.util;
 
 import com.mybatis3.domain.Student;
-import com.mybatis3.mappers.StudentMapper;
-import com.mybatis3.typehandlers.PhoneTypeHandler;
+import com.mybatis3.mapper.StudentMapper;
+import com.mybatis3.typehandler.PhoneTypeHandler;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -23,10 +23,8 @@ public class MyBatisUtil {
     private static volatile SqlSessionFactory xmlSqlSessionFactory;
     private static volatile SqlSessionFactory javaSqlSessionFactory;
 
-    /**
+    /*
      * 使用 XML 配置文件构建 SqlSessionFactory 对象
-     *
-     * @return
      */
     public static SqlSessionFactory getSqlSessionFactoryUsingXML() {
         if (xmlSqlSessionFactory == null) {
@@ -43,10 +41,8 @@ public class MyBatisUtil {
         return xmlSqlSessionFactory;
     }
 
-    /**
+    /*
      * 使用 Java API 构建 SqlSessionFactory 对象
-     *
-     * @return
      */
     public static SqlSessionFactory getSqlSessionFactoryUsingJavaAPI() {
         if (javaSqlSessionFactory == null) {

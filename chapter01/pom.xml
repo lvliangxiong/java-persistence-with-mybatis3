@@ -5,18 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.mybatis3</groupId>
         <artifactId>java-persistence-with-mybatis3</artifactId>
+        <groupId>com.mybatis3</groupId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>com.mybatis3</groupId>
     <artifactId>chapter01</artifactId>
-    <version>0.0.1</version>
     <packaging>jar</packaging>
 
-    <name>chapter01</name>
+    <name>ch01 Getting started with MyBatis</name>
     <url>http://www.mybatis.org</url>
     <description>MyBatis Book Chapter 01</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mybatis3</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

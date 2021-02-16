@@ -1,4 +1,3 @@
-
 package com.mybatis3.util;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
@@ -33,10 +32,6 @@ public class DataSourceFactory {
         return dataSource;
     }
 
-    /**
-     *x
-     * @return
-     */
     public static DataSource getJNDIDataSource() {
         String dataSourceJNDIName = "java:comp/env/jdbc/MyBatisDemoDS";
         try {

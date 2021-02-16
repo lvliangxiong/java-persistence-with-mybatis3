@@ -9,5 +9,5 @@ Topics covered:
 
 How to Run:
 	1. Configure Database Connection properties like hostname, username and password in src/main/resources/application.properties file.
-	2. Run JUnit Test classes in com.mybatis3.services package under src/test/java/ folder.
+	2. Run JUnit Test classes in com.mybatis3.service package under src/test/java/ folder.
 		
